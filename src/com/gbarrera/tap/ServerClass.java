@@ -2,13 +2,14 @@ package com.gbarrera.tap;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class ServerClass {
 	private String serverClassName;
 	private ArrayList<Method> methods;
 	
-	private ArrayList<String> logicClassesName;
+	private HashMap<String, Class<?>> logicClasses;
 	
 	public String getServerClassName() {
 		return serverClassName;
@@ -18,15 +19,15 @@ public class ServerClass {
 		return methods;
 	}
 	
-	public ArrayList<String> getLogicClassesName() {
-		return logicClassesName;
+	public HashMap<String, Class<?>> getLogicClasses() {
+		return logicClasses;
 	}
 	
 	
 	public ServerClass(String serverClassName) {
 		this.serverClassName = serverClassName;
 		methods = new ArrayList<>();
-		logicClassesName = new ArrayList<>();
+		logicClasses = new HashMap<>();
 	}
 	
 	public String buildJavaCode() {
@@ -42,6 +43,11 @@ public class ServerClass {
 		code += "import javax.ws.rs.core.Response;\n";
 		code += "\n";
 		code += "public class " + this.serverClassName + " {\n";
+		code += "\n";
+		
+		for(Class<?> logicClass : this.logicClasses.values()) {
+			code += "    " + logicClass.getName() + " obj" + logicClass.getSimpleName() + " = new " + logicClass.getName() + "()\n";
+		}
 		
 		for(Method method : methods) {
 
@@ -73,18 +79,25 @@ public class ServerClass {
 		return code;
 	}
 
-
 	private String buildGetMethod(Method method) {
 		String methodCode = "";
-		
+		int paramCount = 0;
 		
 		methodCode += "    @GET\n";
 		methodCode += "    @Path(\"/{id}\")\n";
 		methodCode += "    @Produces(MediaType.APPLICATION_JSON)\n";
 		
-		methodCode += "    public " + method.getReturnType().getTypeName() + " " +  method.getName() + "() {\n";
+		methodCode += "    public " + method.getReturnType().getTypeName() + " " +  method.getName() + "(";
 		
+		for(Class<?> param : method.getParameterTypes()) {
+			methodCode += param.getTypeName() + " param" + paramCount++ + ", "; 
+		}
+		if (method.getParameterTypes().length > 0)
+			methodCode = methodCode.substring(0, methodCode.length() - 2);
+	
+		methodCode += ") {\n";
 		
+		methodCode += "        return bl.getCustomer(id);";
 		
 		
 		methodCode += "    }\n"; 
