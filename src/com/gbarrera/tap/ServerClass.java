@@ -1,0 +1,123 @@
+package com.gbarrera.tap;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+
+
+public class ServerClass {
+	private String serverClassName;
+	private ArrayList<Method> methods;
+	
+	private ArrayList<String> logicClassesName;
+	
+	public String getServerClassName() {
+		return serverClassName;
+	}
+
+	public ArrayList<Method> getMethods() {
+		return methods;
+	}
+	
+	public ArrayList<String> getLogicClassesName() {
+		return logicClassesName;
+	}
+	
+	
+	public ServerClass(String serverClassName) {
+		this.serverClassName = serverClassName;
+		methods = new ArrayList<>();
+		logicClassesName = new ArrayList<>();
+	}
+	
+	public String buildJavaCode() {
+		String code = ""; 
+		
+		code += "import javax.ws.rs.Consumes;\n";
+		code += "import javax.ws.rs.GET;\n";
+		code += "import javax.ws.rs.POST;\n";
+		code += "import javax.ws.rs.Path;\n";
+		code += "import javax.ws.rs.PathParam;\n";
+		code += "import javax.ws.rs.Produces;\n";
+		code += "import javax.ws.rs.core.MediaType;\n";
+		code += "import javax.ws.rs.core.Response;\n";
+		code += "\n";
+		code += "public class " + this.serverClassName + " {\n";
+		
+		for(Method method : methods) {
+
+			code += "\n";
+			
+			PublishMethod publishMethodAnnotation = (PublishMethod)method.getDeclaredAnnotation(PublishMethod.class);
+			
+			switch(publishMethodAnnotation.type()){
+			case GET:
+				code += buildGetMethod(method);
+				break;
+				
+			case POST:
+				code += buildPostMethod(method);
+				break;
+				
+			case DELETE:
+				code += buildDeleteMethod(method);
+				break;
+				
+			case PUT:
+				code += buildPutMethod(method);
+				break;
+			}
+		}
+		
+		code += "}\n";
+		
+		return code;
+	}
+
+
+	private String buildGetMethod(Method method) {
+		String methodCode = "";
+		
+		
+		methodCode += "    @GET\n";
+		methodCode += "    @Path(\"/{id}\")\n";
+		methodCode += "    @Produces(MediaType.APPLICATION_JSON)\n";
+		
+		methodCode += "    public " + method.getReturnType().getTypeName() + " " +  method.getName() + "() {\n";
+		
+		
+		
+		
+		methodCode += "    }\n"; 
+		
+		return methodCode;
+	}
+	
+	private String buildPostMethod(Method method) {
+		String methodCode = "";
+		
+		methodCode += "    @POST\n";
+		methodCode += "    @Path(\"/{id}\")\n";
+		methodCode += "    @Consume(MediaType.APPLICATION_JSON)\n";
+		methodCode += "    public " + method.getReturnType().getTypeName() + " " +  method.getName() + "() {\n";
+		
+		
+		
+		
+		methodCode += "    }\n"; 
+		
+		return methodCode;
+	}
+
+	private String buildDeleteMethod(Method method) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private String buildPutMethod(Method method) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+}

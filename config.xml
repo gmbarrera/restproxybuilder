@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<config>
+
+	<server>
+		<logic_path>C:\Users\Gabriel\workspace.jee\ProjectLogic\src\</logic_path>	
+	</server>
+
+	<client>
+		<proxy_path>C:\Users\Gabriel\workspace.jee\ProjectGui\src\</proxy_path>
+	</client>
+	
+	<serverClassName>ExampleService</serverClassName>
+	
+	<temp_path>D:\Temporal\</temp_path>
+	
+	
+	
+</config>
